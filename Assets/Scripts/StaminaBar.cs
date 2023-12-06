@@ -5,52 +5,59 @@ using UnityEngine.UI;
 
 public class StaminaBar : MonoBehaviour
 {
-    public Image staminaBarFill;
     public Text staminaText;
-    
+
     public float maxStamina = 100f;
     public float currentStamina;
+    public float staminaDepletionRate = 10f;
     public float staminaRegenRate = 10f;
+     public float normalSpeed = 5f; // Adjust the normal speed as needed
+    public float slowedSpeed = 2.5f; // Adjust the slowed speed as needed
 
     void Start()
     {
         currentStamina = maxStamina;
-        UpdateStaminaBar();
+        UpdateStamina();
     }
 
     void Update()
     {
-        // Example: Simulate stamina regeneration over time
-        if (currentStamina < maxStamina)
+        if (Input.GetKey(KeyCode.W) || Input.GetKey(KeyCode.A) || Input.GetKey(KeyCode.S) || Input.GetKey(KeyCode.D))
         {
-            currentStamina += staminaRegenRate * Time.deltaTime;
-            currentStamina = Mathf.Clamp(currentStamina, 0f, maxStamina);
-            UpdateStaminaBar();
-        }
-    }
-
-    public void ConsumeStamina(float amount)
-    {
-        if (currentStamina >= amount)
-        {
-            currentStamina -= amount;
-            UpdateStaminaBar();
+            if (currentStamina > 0)
+            {
+                currentStamina -= staminaDepletionRate * Time.deltaTime;
+                currentStamina = Mathf.Clamp(currentStamina, 0f, maxStamina);
+                UpdateStamina();
+                MovePlayer(normalSpeed);
+            }
+            else
+            {
+                // Player has no stamina, slow down movement
+                MovePlayer(slowedSpeed);
+            }
         }
         else
         {
-            Debug.Log("Not enough stamina!");
+            // If the player is not moving, regenerate stamina
+            currentStamina += staminaRegenRate * Time.deltaTime;
+            currentStamina = Mathf.Clamp(currentStamina, 0f, maxStamina);
+            UpdateStamina();
         }
     }
 
-    void UpdateStaminaBar()
+    void MovePlayer(float speed)
     {
-        float fillAmount = currentStamina / maxStamina;
-        staminaBarFill.fillAmount = fillAmount;
+        // Implement your player movement logic here, adjusting speed as needed
+        float horizontalMovement = Input.GetAxis("Horizontal");
+        float verticalMovement = Input.GetAxis("Vertical");
 
-        // Update the Text UI element with the current stamina value
-        if (staminaText != null)
-        {
-            staminaText.text = "Stamina: " + currentStamina.ToString("F0");
-        }
+        Vector3 movement = new Vector3(horizontalMovement, 0f, verticalMovement) * speed * Time.deltaTime;
+        transform.Translate(movement);
+    }
+
+    void UpdateStamina()
+    {
+        staminaText.text = "Stamina: " + currentStamina.ToString();
     }
 }
