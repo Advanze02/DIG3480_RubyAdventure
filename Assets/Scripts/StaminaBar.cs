@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
+//Alec Jerard Prestoza
 public class StaminaBar : MonoBehaviour
 {
     public Text staminaText;
@@ -52,7 +53,7 @@ public class StaminaBar : MonoBehaviour
         float horizontalMovement = Input.GetAxis("Horizontal");
         float verticalMovement = Input.GetAxis("Vertical");
 
-        Vector3 movement = new Vector3(horizontalMovement, 0f, verticalMovement) * speed * Time.deltaTime;
+        Vector2 movement = new Vector2(horizontalMovement, verticalMovement) * speed * Time.deltaTime;
         transform.Translate(movement);
     }
 
